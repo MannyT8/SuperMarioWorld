@@ -1,0 +1,56 @@
+{
+  "name": "mario5-sample-pilet",
+  "version": "1.2.0",
+  "description": "A sample pilet for playing Mario5.",
+  "keywords": [
+    "pilet"
+  ],
+  "dependencies": {
+    "react-h5-audio-player": "^3.8.2"
+  },
+  "devDependencies": {
+    "@dbeining/react-atom": "latest",
+    "@libre/atom": "latest",
+    "@types/react": "^16.8.24",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-router": "^5.1.3",
+    "@types/react-router-dom": "^5.1.2",
+    "piral-cli": "latest",
+    "piral-cli-parcel": "latest",
+    "react": "^16.3.0 || ^17.0.0",
+    "react-dom": "^16.3.0 || ^17.0.0",
+    "react-router-dom": "latest",
+    "reactstrap": "^8.0.1",
+    "sample-piral": "latest",
+    "sass": "^1.23.6",
+    "tslib": "latest"
+  },
+  "peerDependencies": {
+    "@dbeining/react-atom": "*",
+    "@libre/atom": "*",
+    "history": "*",
+    "path-to-regexp": "*",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router": "*",
+    "react-router-dom": "*",
+    "reactstrap": "*",
+    "sample-piral": "*",
+    "tslib": "*"
+  },
+  "scripts": {
+    "debug-pilet": "pilet debug",
+    "build-pilet": "pilet build",
+    "upgrade-pilet": "pilet upgrade --force-overwrite yes",
+    "publish-pilet": "pilet publish --fresh --api-key $PILET_API_KEY --url $PILET_API_URL",
+    "start": "pilet debug"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "piral": {
+    "comment": "Keep this section to allow running `piral upgrade`.",
+    "name": "sample-piral"
+  }
+}

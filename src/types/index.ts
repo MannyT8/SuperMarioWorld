@@ -80,6 +80,7 @@ export interface Keys {
 	paused(): void;
 	handler(event: KeyboardEvent, status: boolean): void;
 	accelerate: boolean;
+	jump: boolean;
 	left: boolean;
 	up: boolean;
 	right: boolean;

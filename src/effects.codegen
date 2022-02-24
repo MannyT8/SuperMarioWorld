@@ -15,10 +15,17 @@ module.exports = function() {
     .map(m => m.substr(0, m.length - 4))
     .map(m => `${m}: require('./Assets/audio/${m}.mp3')`);
 
+  const wavFiles = files
+    .filter(m => m.endsWith('.wav'))
+    .map(m => m.substr(0, m.length - 4))
+    .map(m => `${m}: require('./Assets/audio/${m}.wav')`);
+
   return `
     export const effects = {
       '.ogg': {
-        ${oggFiles.join(',')}
+        ${oggFiles.join(',')},
+        ${mp3Files.join(',')},
+        ${wavFiles.join(',')}
       },
       '.mp3': {
         ${mp3Files.join(',')}

@@ -46,11 +46,14 @@ export class HtmlAudioManager implements SoundManager {
     const test = <HTMLAudioElement>document.createElement('audio');
     this.support =
       typeof test.canPlayType === 'function' &&
-      (test.canPlayType('audio/mpeg') !== '' || test.canPlayType('audio/ogg') !== '');
+      // (test.canPlayType('audio/mpeg') !== '' || test.canPlayType('audio/ogg') !== '');
+      // (test.canPlayType('audio/mp3') !== '' || test.canPlayType('audio/ogg') !== '');
+      (test.canPlayType('audio/mp3') !== '' || test.canPlayType('audio/ogg') !== '' || test.canPlayType('audio/wav') !== '');
+
 
     this.onload = callback;
-    this.soundNames = ['jump', 'coin', 'enemy_die', 'grow', 'hurt', 'mushroom', 'shell', 'shoot', 'lifeupgrade'];
-    this.musicNames = ['game', 'invincible', 'die', 'success', 'gameover', 'peach', 'ending', 'menu', 'editor', 'hot_head_bop', 'gametest','snakeychantey','psycho_driver'];
+    this.soundNames = ['jump', 'coin', 'enemy_die', 'grow', 'hurt', 'mushroom', 'shell', 'shoot', 'lifeupgrade', '18', 'jump2', 'jumpbig'];
+    this.musicNames = ['game', 'invincible', 'die', 'success', 'gameover', 'peach', 'ending', 'menu', 'editor', 'hot_head_bop','snakeychantey','psycho_driver'];
     this.musicLoops = [true, false, false, false, false, true, false, true, true, true, true, true, true];
     this.sounds = [];
     this.tracks = [];
@@ -61,6 +64,7 @@ export class HtmlAudioManager implements SoundManager {
     if (this.support) {
       let toLoad = 0;
       const ext = test.canPlayType('audio/ogg').match(/maybe|probably/i) ? '.ogg' : '.mp3';
+      // const ext = test.canPlayType('audio/wav').match(/maybe|probably/i) ? '.wav' : '.ogg';
       const start = () => {
         if (n++ < 25 && toLoad > 0) {
           setTimeout(start, 100);
@@ -129,6 +133,7 @@ export class HtmlAudioManager implements SoundManager {
       for (let i = this.soundNames.length; i--; ) {
         if (this.soundNames[i] === name) {
           const t = this.sounds[i];
+          console.log(this.sounds[i]);
 
           for (let j = t.length; j--; ) {
             if (t[j].duration === 0) {
@@ -138,6 +143,7 @@ export class HtmlAudioManager implements SoundManager {
             if (t[j].ended) {
               t[j].currentTime = 0;
             } else if (t[j].currentTime <= 0) {
+              console.log(t[j]);
               t[j].play();
               return;
             }

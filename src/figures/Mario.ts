@@ -12,6 +12,7 @@ export class Mario extends Figure implements DeathAnimation {
   blinking: number;
   fast: boolean;
   crouching: boolean;
+  lookingUp: boolean;
   jumping: boolean;
   deathBeginWait: number;
   deathEndWait: number;
@@ -28,6 +29,10 @@ export class Mario extends Figure implements DeathAnimation {
   fireStandSprites: Array<Array<Point>>;
   crouchSprites: Array<Array<Point>>;
   jumpSprites: Array<Array<Point>>;
+  walkSprites: Array<Array<Point>>;
+  bigWalkSprites: Array<Array<Point>>;
+  lookUpSprites: Array<Array<Point>>;
+
   isPaused: boolean;
   changeBackground: number;
 
@@ -35,24 +40,41 @@ export class Mario extends Figure implements DeathAnimation {
   constructor(level: Level) {
     super(level);
     console.log(level);
-      this.standSprites = [
+      this.standSprites = [ //[marioState][direction]
       [{ x: 412, y: 112 }, { x: 500, y: 112 }], // small
       [{ x: 412, y: 292 }, { x: 500, y: 292 }], // big
       [{ x: 412, y: 1075}, { x: 500, y: 1075}], // fire
       [{ x: 412, y: 1248}, { x: 500, y: 1248}], // fly
     ];
-    this.crouchSprites = [
+    this.crouchSprites = [ //[marioState][direction]
       [{ x: 241, y: 193 }, { x: 672, y: 193 }], //small
       [{ x: 241, y: 374 }, { x: 672, y: 374 }], //big
       [{ x: 241, y: 1159}, { x: 672, y: 1159}], //fire
       [{ x: 241, y: 1159}, { x: 672, y: 1159}]]; //fly
 
-    this.jumpSprites = [
+    this.jumpSprites = [ //[marioState][direction]
       [{ x: 412, y: 200 }, { x: 500, y: 200 }], //small
       [{ x: 412, y: 380 }, { x: 500, y: 374 }], //big
       [{ x: 412, y: 1165}, { x: 500, y: 1165}], //fire
       [{ x: 412, y: 1165}, { x: 500, y: 1165}]]; //fly
 
+      this.walkSprites = [ //[marioState][direction]
+        [{ x: 154, y: 112 }, { x: 758, y: 112 }], //small
+        [{ x: 152, y: 292 }, { x: 760, y: 292 }], //big
+        [{ x: 152, y: 1074}, { x: 760, y: 1075}], //fire
+        [{ x: 152, y: 1165}, { x: 760, y: 1165}]]; //fly
+
+        this.bigWalkSprites = [ //[marioState][direction]
+        [{ x: 0, y: 0 }, { x: 0, y: 0}], //small N/A
+        [{ x: 64, y: 292 }, { x: 848, y: 292 }], //big
+        [{ x: 64, y: 1074}, { x: 848, y: 1075}], //fire
+        [{ x: 152, y: 1164}, { x: 760, y: 1165}]]; //fly
+
+        this.lookUpSprites = [ //[marioState][direction]
+        [{ x: 151, y: 199 }, { x: 760, y: 200 }], //small
+        [{ x: 327, y: 550 }, { x: 585, y: 550 }], //big
+        [{ x: 151, y: 1159}, { x: 760, y: 1160}], //fire
+        [{ x: 241, y: 1159}, { x: 672, y: 1159}]]; //fly
 
     this.deadly = 0;
     this.invulnerable = 0;
@@ -76,9 +98,9 @@ export class Mario extends Figure implements DeathAnimation {
     //  this.level.playMusic('game');
     // this.level.playMusic('gametest');
     // this.level.playMusic('invincible');
-        // this.level.playMusic('hot_head_bop');
+    // this.level.playMusic('hot_head_bop');
 // this.level.playMusic('snakeychantey');
-this.level.playMusic('psycho_driver');
+// this.level.playMusic('psycho_driver');
 console.log(level);
 // this.level.playMusic('b');
 // this.level.playMusic("c:\Users\torre\OneDrive\Desktop\SuperMario\mario5-sample-pilet\src\Assets\audio\b.ogg");
@@ -135,7 +157,8 @@ console.log(level);
   input(keys: Keys) {
     this.fast = keys.accelerate;
     this.crouching = keys.down;
-    this.jumping = keys.up;
+    this.lookingUp = keys.up;
+    this.jumping = keys.jump;
 
       if (this.onground && this.jumping) {
         this.jump();
@@ -150,6 +173,11 @@ console.log(level);
         this.walk(keys.left, keys.accelerate);
       } else {
         this.vx = 0;
+      }
+
+      if (keys.up) {
+        this.lookUp();
+        console.log("looking up");
       }
 
       if(keys.pause){
@@ -212,9 +240,9 @@ console.log(level);
       vx = 0;
       this.crouch();
     } else if (this.onground){
-      if (vx > 0)   this.walkRight();
-      else if (vx < 0)  this.walkLeft();
-       else if (vx == 0) this.stand();
+      if(vx!=0) this.walks();
+       else if (this.lookingUp) this.lookUp();
+       else  this.stand();
     }
 
     super.setVelocity(vx, vy);
@@ -249,46 +277,32 @@ console.log(level);
     this.vx = setup.walking_v * (fast ? 2 : 1) * (reverse ? -1 : 1);
   }
 
-  walkRight() {
-    if (this.marioState === MarioState.small) {
-      // if (!this.setupFrames(8, 2, true, 'WalkRightSmall')) {
-        this.setImage(images.sprites, 758, 112);
-
-      //}
-     } else if (this.marioState === MarioState.big) {
-      // if (!this.setupFrames(9, 2, true, 'WalkRightBig')) {
-        this.setImage(images.sprites, 758, 292);
-     // }
-    }
-      else if (this.marioState === MarioState.fire){
-      // if (!this.setupFrames(9, 2, false, 'WalkLeftFire')) {
-        this.setImage(images.sprites, 760, 1075);
-    //}
-  }
-  }
-
-  walkLeft() {
-    if (this.marioState === MarioState.small) {
-      if (!this.setupFrames(8, 2, false, 'WalkLeftSmall')) {
-        this.setImage(images.sprites, 154, 112);
-      }
-    } else if (this.marioState === MarioState.big) {
-
-      if (!this.setupFrames(9, 2, false, 'WalkLeftBig')) {
-        this.setImage(images.sprites, 154, 292);
-      }
-    }
-      else if (this.marioState === MarioState.fire){
-      if (!this.setupFrames(9, 2, false, 'WalkLeftFire')) {
-        this.setImage(images.sprites, 154, 1075);
-    }
-  }
-}
-
   stand() {
     const coords = this.standSprites[this.marioState - 1][this.direction === Direction.left ? 0 : 1];
     this.setImage(images.sprites, coords.x, coords.y);
     this.clearFrames();
+  }
+
+  walks() {
+    console.log(this.currentFrame);
+    this.currentFrame++;
+    const ms = this.marioState;
+    const d = this.direction;
+    const coords1 = this.walkSprites[ms-1][d === Direction.left ? 0 : 1];
+    const coords2 = this.standSprites[ms-1][d === Direction.left ? 0 : 1];
+    const coords3 = this.bigWalkSprites[ms-1][d === Direction.left ? 0 : 1];
+
+    if(ms === MarioState.small){
+    if(this.currentFrame%8<4) this.setImage(images.sprites, coords1.x, coords1.y);
+    else this.setImage(images.sprites, coords2.x, coords2.y);
+    }
+    else{ if(this.currentFrame%12<4) this.setImage(images.sprites, coords1.x, coords1.y);
+      else if(this.currentFrame%12<8) this.setImage(images.sprites, coords2.x, coords2.y);
+else this.setImage(images.sprites, coords3.x, coords3.y);
+
+    }
+    // this.clearFrames();
+    // this.stand();
   }
 
   crouch() {
@@ -297,8 +311,19 @@ console.log(level);
     this.clearFrames();
   }
 
+  lookUp() {
+    const coords = this.lookUpSprites[this.marioState - 1][this.direction === Direction.left ? 0 : 1];
+    this.setImage(images.sprites, coords.x, coords.y);
+    console.log("x =" + coords.x);
+    console.log("y =" + coords.y);
+    this.clearFrames();
+  }
+
   jump() {
-    this.level.playSound('jump');
+    // this.level.playSound('jump');
+    if(this.marioState === MarioState.small )  this.level.playSound('jump2');
+else this.level.playSound('jumpbig');
+    // this.level.playSound('18');
     this.vy = setup.jumping_v;
     const coords = this.jumpSprites[this.marioState - 1][this.direction === Direction.left ? 0 : 1];
     // const coords = this.jumpSprites[this.state - 1][this.direction === Direction.left ? 0 : 1];
@@ -363,6 +388,10 @@ console.log(level);
   }
 
   death() {
+    this.currentFrame++;
+    // console.log(this.currentFrame);
+    if(this.currentFrame%8<4) this.setImage(images.sprites, 81, 205);
+    else  this.setImage(images.sprites, 863, 205);
     if (this.deathBeginWait) {
       this.deathBeginWait--;
       return true;
@@ -387,7 +416,8 @@ console.log(level);
   die() {
     this.setMarioState(MarioState.small);
     this.deathStepDown = Math.ceil(240 / this.deathFrames);
-    this.setupFrames(9, 2, false);
+    console.log("death Frame =" + this.deathFrames);
+    console.log("current Frame =" + this.currentFrame);
     this.setImage(images.sprites, 81, 205);
     this.level.playMusic('die');
     super.die();

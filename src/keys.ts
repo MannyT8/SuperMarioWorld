@@ -17,6 +17,7 @@ export const keys: Keys = {
     keys.left = false;
     keys.right = false;
     keys.accelerate = false;
+    keys.jump = false;
     keys.up = false;
     keys.down = false;
     keys.pause = false;
@@ -35,7 +36,7 @@ export const keys: Keys = {
     switch (ev.keyCode) {
       case 57392: //CTRL on MAC
       case 17: //CTRL
-      case 79: //O
+      case 75: //K
         keys.accelerate = status;
         break;
       case 83: //S
@@ -54,6 +55,9 @@ export const keys: Keys = {
       case 38: //UP ARROW
         keys.up = status;
         break;
+        case 76: //L
+        keys.jump = status;
+        break;
         case 32: //SPACE BAR
         keys.pause = status;
         break;
@@ -67,6 +71,7 @@ export const keys: Keys = {
   
   accelerate: false,
   left: false,
+  jump: false,
   up: false,
   right: false,
   down: false,
